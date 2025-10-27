@@ -1,527 +1,69 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>For Des — Daily Love Note</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg1: #fff0f3;
-      --bg2: #fbeefd;
-      --accentA: #ffb6d6;
-      --accentB: #d8b4ff;
-      --text: #4b2f3a;
-      --muted: #7b5967;
-      --glass: rgba(255,255,255,0.76);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{
-      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:28px;
-      background:
-        radial-gradient(800px 400px at 10% 15%, #fff7fb 0%, #fff0f6 18%, #fdeefb 36%, #fbf8ff 60%),
-        linear-gradient(135deg, var(--bg1), #f6f0ff 60%);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      overflow:hidden;
-    }
-
-    /* main card */
-    .card{
-      width:100%;
-      max-width:880px;
-      border-radius:20px;
-      padding:28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,253,255,0.94));
-      box-shadow: 0 20px 50px rgba(210,140,190,0.10);
-      position:relative;
-      overflow:visible;
-    }
-
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .logo{
-      width:56px; height:56px;
-      border-radius:14px;
-      background: linear-gradient(135deg,var(--accentA),var(--accentB));
-      display:grid; place-items:center;
-      font-weight:800;
-      color:white;
-      font-family: "Merriweather", serif;
-      font-size:20px;
-      box-shadow: 0 8px 24px rgba(220,140,200,0.12);
-    }
-    .tit{
-      display:flex; flex-direction:column;
-    }
-    .tit .main{
-      font-family: "Merriweather", serif;
-      font-size:20px;
-      font-weight:700;
-      color:var(--text);
-      letter-spacing:-0.01em;
-    }
-    .tit .sub{
-      font-size:13px;
-      color:var(--muted);
-      margin-top:2px;
-    }
-
-    /* dreamy sky with soft particles */
-    .sky{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      z-index:0;
-      overflow:hidden;
-      border-radius:20px;
-    }
-    .spark{
-      position:absolute;
-      width:8px; height:8px;
-      border-radius:50%;
-      background:rgba(255,200,230,0.9);
-      filter: blur(.4px);
-      opacity:0.85;
-      transform: translateY(0);
-      animation: rise 12s linear infinite;
-    }
-    @keyframes rise{
-      0%{ transform: translateY(12vh) scale(.8); opacity:0 }
-      10%{ opacity:1 }
-      100%{ transform: translateY(-120vh) scale(1.05); opacity:0 }
-    }
-    .petal{
-      position:absolute;
-      font-size:22px;
-      opacity:0.9;
-      animation: drift var(--t,14s) linear infinite;
-      filter: drop-shadow(0 8px 18px rgba(200,120,160,0.06));
-    }
-    @keyframes drift{
-      0%{ transform: translateY(0) rotate(0) scale(.92); opacity:0 }
-      12%{ opacity:1 }
-      60%{ transform: translateY(-48vh) rotate(180deg) scale(1.03) }
-      100%{ transform: translateY(-130vh) rotate(360deg) scale(.9); opacity:0 }
-    }
-
-    /* content body */
-    .body{
-      position:relative;
-      z-index:2;
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap:20px;
-      align-items:start;
-      margin-top:18px;
-    }
-
-    /* left: note area */
-    .note{
-      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,250,252,0.96));
-      border-radius:14px;
-      padding:22px;
-      box-shadow: 0 8px 28px rgba(210,130,170,0.06);
-    }
-    .note .date{
-      font-size:13px; color:var(--muted); margin-bottom:12px;
-      letter-spacing:0.02em;
-    }
-    .note .text{
-      font-family: "Merriweather", serif;
-      font-size:19px;
-      color:var(--text);
-      line-height:1.6;
-      white-space:pre-wrap;
-      min-height:140px;
-      transition: opacity .28s ease, transform .28s ease;
-    }
-
-    /* small line reveal style */
-    .line{
-      opacity:0; transform: translateY(8px);
-      transition: opacity .42s ease, transform .42s cubic-bezier(.2,.9,.2,1);
-      display:block;
-      margin-bottom:8px;
-    }
-    .line.show{ opacity:1; transform: translateY(0); }
-
-    /* right: controls / archive area */
-    .side{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-    .controls{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .btn{
-      border:0;
-      padding:10px 14px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:700;
-      background: linear-gradient(180deg,var(--accentA),var(--accentB));
-      color:white;
-      box-shadow: 0 10px 26px rgba(210,120,170,0.10);
-      transition: transform .12s ease;
-    }
-    .btn:active{ transform: translateY(2px) }
-    .ghost{
-      background:transparent;
-      color:var(--muted);
-      border:1px solid rgba(150,110,130,0.08);
-      box-shadow:none;
-      font-weight:700;
-    }
-    .small{
-      font-size:13px; color:var(--muted)
-    }
-
-    .archive{
-      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,250,252,0.96));
-      border-radius:12px;
-      padding:12px;
-      max-height:220px;
-      overflow:auto;
-      border:1px solid rgba(200,160,180,0.04);
-    }
-    .archive-item{
-      font-size:14px;
-      padding:8px;
-      border-radius:8px;
-      margin-bottom:8px;
-      cursor:pointer;
-      color:var(--muted);
-    }
-    .archive-item:hover{ background: rgba(255,230,245,0.6); color:var(--text) }
-
-    footer{
-      margin-top:18px;
-      text-align:center;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    /* modal */
-    .modal-back{
-      position:fixed; inset:0; display:none; place-items:center; background: rgba(20,12,20,0.28); z-index:40;
-    }
-    .modal{
-      background:white; padding:18px; border-radius:12px; max-width:520px; width:94%;
-      box-shadow: 0 18px 60px rgba(40,20,40,0.18);
-    }
-    .modal textarea{ width:100%; height:140px; border-radius:10px; padding:10px; border:1px solid rgba(200,160,180,0.12); font-size:15px; resize:vertical; font-family:inherit; }
-    .row{ display:flex; gap:8px; justify-content:flex-end; margin-top:10px; }
-    .muted{ color:var(--muted); font-size:13px }
-
-    /* responsive */
-    @media (max-width:880px){
-      .body{ grid-template-columns: 1fr; }
-      .side{ order:2 }
-      .note{ order:1 }
-    }
-    @media (max-width:420px){
-      .logo{ width:48px; height:48px; font-size:18px }
-      .brand .tit .main{ font-size:18px }
-    }
-  </style>
-</head>
-<body>
-  <div class="sky" id="sky" aria-hidden="true"></div>
-
-  <main class="card" role="main" aria-labelledby="brandTitle">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true">D💗</div>
-        <div class="tit">
-          <div class="main" id="brandTitle">For Des</div>
-          <div class="sub">A small place for daily love & appreciation</div>
-        </div>
-      </div>
-
-      <div style="text-align:right">
-        <div class="small">Made with ❤️</div>
-      </div>
-    </header>
-
-    <div class="body" role="region" aria-label="Daily Note">
-      <section class="note" aria-live="polite">
-        <div class="date" id="dateStr">Today</div>
-        <div class="text" id="noteText" tabindex="0" aria-label="Love note lines">
-          <!-- lines injected -->
-          <span class="line" id="ln0"></span>
-          <span class="line" id="ln1"></span>
-          <span class="line" id="ln2"></span>
-          <span class="line" id="ln3"></span>
-          <span class="line" id="ln4"></span>
-          <span class="line" id="ln5"></span>
-        </div>
-      </section>
-
-      <aside class="side" aria-hidden="false">
-        <div class="controls" role="toolbar">
-          <button class="btn" id="prevBtn" title="Previous note">◀ Prev</button>
-          <button class="btn" id="nextBtn" title="Next note">Next ▶</button>
-          <button class="btn ghost" id="addBtn" title="Add a new note">+ Add note</button>
-        </div>
-
-        <div style="margin-top:6px" class="small">Saved notes (tap to view)</div>
-        <div class="archive" id="archive" aria-label="Saved notes">
-          <!-- archive items -->
-        </div>
-      </aside>
-    </div>
-
-    <footer>
-      Open this everyday for a new note. You can add more notes anytime.
-    </footer>
-  </main>
-
-  <!-- modal -->
-  <div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal" role="document">
-      <div style="font-weight:700; margin-bottom:8px">Add a new love note</div>
-      <textarea id="newNote" placeholder="Write your love note here..."></textarea>
-      <div class="row">
-        <button class="btn ghost" id="cancelAdd">Cancel</button>
-        <button class="btn" id="saveAdd">Save</button>
-      </div>
-      <div style="margin-top:8px" class="muted">Notes are stored locally on this device (safe in your browser).</div>
-    </div>
-  </div>
-
-  <script>
-    /***************
-     * DATA + STORE
-     * Preload with the exact message you provided, split into lines.
-     ***************/
-    const defaultNotes = [
-`I know I say it a lot but I love you
-I love your smile
-I love your voice
-I love how dedicated you are
-I love your eyes, your lips, your nose, your face
-I wish I could hold your hand right now but I can't
-I want to love you everyday, forever
-I couldn't have guessed you were this perfect, Des, you are and I'm glad people fumbled you and I pray I don't
-I'm in love with you, I'm deeply in love with you`
-    ];
-
-    const STORAGE_KEY = 'des_love_notes_v1';
-    const NOTES_ORDER_KEY = 'des_love_notes_index';
-
-    function loadNotes(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return defaultNotes.slice();
-        const parsed = JSON.parse(raw);
-        if(Array.isArray(parsed) && parsed.length) return parsed;
-        return defaultNotes.slice();
-      }catch(e){
-        return defaultNotes.slice();
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For Des 💛</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #f3e5ab, #d4af37);
+        font-family: 'Georgia', serif;
+        color: #3a2e0d;
+        overflow: hidden;
       }
-    }
 
-    function saveNotes(arr){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-    }
+      .container {
+        max-width: 600px;
+        text-align: center;
+        font-size: 1.3rem;
+        line-height: 2rem;
+      }
 
-    // state
-    let notes = loadNotes();
-    let idx = parseInt(localStorage.getItem(NOTES_ORDER_KEY) || '0', 10);
-    if(isNaN(idx) || idx < 0 || idx >= notes.length) idx = 0;
+      .line {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 1.5s forwards;
+      }
 
-    /***************
-     * UI Refs
-     ***************/
-    const lnEls = [document.getElementById('ln0'),document.getElementById('ln1'),document.getElementById('ln2'),document.getElementById('ln3'),document.getElementById('ln4'),document.getElementById('ln5')];
-    const dateStr = document.getElementById('dateStr');
-    const archive = document.getElementById('archive');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const addBtn = document.getElementById('addBtn');
-    const modalBack = document.getElementById('modalBack');
-    const newNote = document.getElementById('newNote');
-    const cancelAdd = document.getElementById('cancelAdd');
-    const saveAdd = document.getElementById('saveAdd');
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="text"></div>
 
-    /***************
-     * Helpers
-     ***************/
-    function formatDate(d){
-      const opts = { weekday: 'long', month: 'short', day: 'numeric' };
-      return d.toLocaleDateString(undefined, opts);
-    }
+    <script>
+      const lines = [
+        "I know I say it a lot but I love you",
+        "I love your smile",
+        "I love your voice",
+        "I love how dedicated you are",
+        "I love your eyes, your lips, your nose, your face",
+        "I wish I could hold your hand right now but I can't",
+        "I want to love you everyday, forever",
+        "I couldn't have guessed you were this perfect, Des, you are and I'm glad people fumbled you and I pray I don't",
+        "I'm in love with you, I'm deeply in love with you"
+      ];
 
-    function renderArchive(){
-      archive.innerHTML = '';
-      notes.forEach((n,i)=>{
-        const el = document.createElement('div');
-        el.className = 'archive-item';
-        el.textContent = (n.split('\n')[0]||'Note') + (i===idx ? ' — (current)' : '');
-        el.addEventListener('click', ()=> { idx = i; saveIndex(); render(); });
-        archive.appendChild(el);
+      const container = document.getElementById("text");
+
+      lines.forEach((line, i) => {
+        const div = document.createElement("div");
+        div.textContent = line;
+        div.className = "line";
+        div.style.animationDelay = `${i * 2}s`;
+        container.appendChild(div);
       });
-    }
-
-    function saveIndex(){
-      localStorage.setItem(NOTES_ORDER_KEY, String(idx));
-    }
-
-    function showNoteLines(text){
-      // split into lines; show up to available slots
-      const lines = text.split('\n').filter(Boolean);
-      for(let i=0;i<lnEls.length;i++){
-        const el = lnEls[i];
-        el.classList.remove('show');
-        el.textContent = '';
-      }
-      // small staggered reveal
-      lines.slice(0, lnEls.length).forEach((ln, i)=>{
-        const el = lnEls[i];
-        setTimeout(()=> {
-          el.textContent = ln.trim();
-          el.classList.add('show');
-        }, 120 * i);
-      });
-      // if more lines than slots, append the rest to the last slot
-      if(lines.length > lnEls.length){
-        const rest = lines.slice(lnEls.length).join(' ');
-        setTimeout(()=> {
-          lnEls[lnEls.length-1].textContent += ' ' + rest;
-        }, 120 * lnEls.length);
-      }
-    }
-
-    function render(){
-      // date
-      dateStr.textContent = formatDate(new Date());
-      // show current note
-      const currentNote = notes[idx] || '';
-      showNoteLines(currentNote);
-      // archive
-      renderArchive();
-    }
-
-    /***************
-     * Controls
-     ***************/
-    nextBtn.addEventListener('click', ()=>{
-      idx = (idx + 1) % notes.length;
-      saveIndex();
-      render();
-      // slight visual feedback
-      nextBtn.animate([{ transform:'translateY(0)' }, { transform:'translateY(-6px)' }, { transform:'translateY(0)'}], { duration:260 });
-    });
-    prevBtn.addEventListener('click', ()=>{
-      idx = (idx - 1 + notes.length) % notes.length;
-      saveIndex();
-      render();
-      prevBtn.animate([{ transform:'translateY(0)' }, { transform:'translateY(-6px)' }, { transform:'translateY(0)'}], { duration:260 });
-    });
-
-    addBtn.addEventListener('click', ()=>{
-      // small confirmation so accidental taps don't open
-      const ok = confirm("Add a new note? (This opens an editor where you can paste your message.)");
-      if(!ok) return;
-      newNote.value = '';
-      modalBack.style.display = 'grid';
-      modalBack.setAttribute('aria-hidden','false');
-      newNote.focus();
-    });
-
-    cancelAdd.addEventListener('click', ()=>{
-      modalBack.style.display = 'none';
-      modalBack.setAttribute('aria-hidden','true');
-    });
-
-    saveAdd.addEventListener('click', ()=>{
-      const txt = newNote.value.trim();
-      if(!txt){
-        alert('Please write something before saving.');
-        return;
-      }
-      notes.push(txt);
-      saveNotes(notes);
-      idx = notes.length - 1;
-      saveIndex();
-      modalBack.style.display = 'none';
-      modalBack.setAttribute('aria-hidden','true');
-      render();
-    });
-
-    // keyboard escape for modal
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'Escape' && modalBack.style.display === 'grid'){
-        modalBack.style.display = 'none'; modalBack.setAttribute('aria-hidden','true');
-      }
-    });
-
-    /***************
-     * Sky particle generation (visual)
-     ***************/
-    const skyEl = document.getElementById('sky');
-    function spawnSpark(){
-      const s = document.createElement('div');
-      s.className = 'spark';
-      const left = Math.random()*100;
-      s.style.left = left + '%';
-      s.style.top = 100 + Math.random()*20 + '%';
-      s.style.background = `linear-gradient(180deg, rgba(255,210,235,0.95), rgba(220,180,240,0.92))`;
-      s.style.width = (6 + Math.random()*8)+'px';
-      s.style.height = s.style.width;
-      s.style.animationDuration = (10 + Math.random()*10) + 's';
-      skyEl.appendChild(s);
-      setTimeout(()=> { try{ s.remove(); }catch(e){} }, (parseFloat(s.style.animationDuration)*1000)+600);
-    }
-    function spawnPetal(){
-      const p = document.createElement('div');
-      p.className = 'petal';
-      p.textContent = ['❦','💗','❥','💕'][Math.floor(Math.random()*4)];
-      const left = (Math.random()*120) - 10;
-      p.style.left = left + '%';
-      const t = (10 + Math.random()*18) + 's';
-      p.style.setProperty('--t', t);
-      p.style.fontSize = (14 + Math.random()*20) + 'px';
-      skyEl.appendChild(p);
-      setTimeout(()=> { try{ p.remove(); }catch(e){} }, (parseFloat(t)*1000)+600);
-    }
-
-    // gentle rhythm
-    setInterval(spawnSpark, 1400);
-    setInterval(spawnPetal, 1700);
-
-    /***************
-     * Init
-     ***************/
-    function init(){
-      // ensure at least one note is present
-      if(!notes || notes.length === 0){ notes = defaultNotes.slice(); saveNotes(notes); }
-      // render
-      render();
-    }
-
-    init();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
+
